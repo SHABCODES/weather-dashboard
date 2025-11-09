@@ -1,0 +1,157 @@
+/* Custom Styles for Weather Dashboard */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-bg: #f8f9fa;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background: linear-gradient(135deg, #2c3e50, #3498db) !important;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+}
+
+.weather-card {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-left: 4px solid var(--primary-color);
+}
+
+.weather-card .temperature {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.weather-card .weather-icon {
+    font-size: 3rem;
+    color: #ffa726;
+}
+
+.weather-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.weather-info-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.weather-info-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.quick-city {
+    transition: all 0.3s ease;
+}
+
+.quick-city:hover {
+    transform: scale(1.05);
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.city-summary-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.city-summary-card:hover {
+    transform: scale(1.02);
+    box-shadow: var(--hover-shadow);
+}
+
+.weather-condition {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    background: var(--primary-color);
+    color: white;
+    display: inline-block;
+}
+
+/* Temperature color coding */
+.temp-hot { color: #e74c3c; }
+.temp-warm { color: #e67e22; }
+.temp-mild { color: #f39c12; }
+.temp-cool { color: #3498db; }
+.temp-cold { color: #2980b9; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .weather-card .temperature {
+        font-size: 2rem;
+    }
+    
+    .weather-card .weather-icon {
+        font-size: 2rem;
+    }
+    
+    .weather-info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Animation for loading */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* History items */
+.history-item {
+    border-left: 3px solid var(--primary-color);
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    transform: translateX(5px);
+}

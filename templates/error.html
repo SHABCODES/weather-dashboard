@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto text-center">
+        <div class="card shadow">
+            <div class="card-body py-5">
+                <div class="display-1 text-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h2 class="text-danger mt-4">Error {{ error_code }}</h2>
+                <p class="lead">{{ error_message }}</p>
+                <div class="mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

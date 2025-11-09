@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Welcome Card -->
+        <div class="card shadow mb-4">
+            <div class="card-body text-center">
+                <h1 class="display-6 text-primary"><i class="fas fa-cloud-sun"></i> Weather Dashboard</h1>
+                <p class="lead">Get real-time weather data for any city worldwide</p>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fas fa-search me-2"></i>Check Weather</h5>
+            </div>
+            <div class="card-body">
+                <form id="weatherForm">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <input type="text" id="cityInput" class="form-control form-control-lg" 
+                                   placeholder="Enter city name (e.g., London, Paris, Tokyo)" required>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-cloud-sun me-2"></i>Get Weather
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-4">
+                    <label class="form-label fw-bold">Multiple Cities (comma separated):</label>
+                    <div class="input-group">
+                        <input type="text" id="citiesInput" class="form-control" 
+                               placeholder="London, Paris, New York, Tokyo">
+                        <button class="btn btn-outline-primary" type="button" onclick="getWeatherSummary()">
+                            <i class="fas fa-list me-2"></i>Get Summary
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Cities -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h6 class="card-title mb-0"><i class="fas fa-bolt me-2"></i>Quick Cities</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6 col-md-3">
+                        <button class="btn btn-outline-secondary w-100 quick-city" data-city="London">London</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <button class="btn btn-outline-secondary w-100 quick-city" data-city="Paris">Paris</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <button class="btn btn-outline-secondary w-100 quick-city" data-city="New York">New York</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <button class="btn btn-outline-secondary w-100 quick-city" data-city="Tokyo">Tokyo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="weatherResults"></div>
+        
+        <!-- History Section -->
+        <div id="historySection" class="card shadow mt-4" style="display: none;">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i>Recent Searches</h5>
+            </div>
+            <div class="card-body">
+                <div id="historyResults"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+console.log("=== WEATHER DASHBOARD ===");
+console.log("JavaScript is working!");
+
+// Main weather app functionality
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded - setting up weather app");
+    
+    // Main search form
+    const form = document.getElementById('weatherForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const city = document.getElementById('cityInput').value.trim();
+        if (city) {
+            getWeatherData(city);
+        }
+    });
+    
+    // Quick city buttons
+    document.querySelectorAll('.quick-city').forEach(button => {
+        button.addEventListener('click', function() {
+            const city = this.getAttribute('data-city');
+            document.getElementById('cityInput').value = city;
+            getWeatherData(city);
+        });
+    });
+    
+    console.log("Weather app ready!");
+});
+
+// Function to get weather data from API
+async function getWeatherData(city) {
+    console.log("Fetching weather for:", city);
+    
+    // Show loading
+    document.getElementById('weatherResults').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading weather data for ${city}...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`/api/v1/weather/current?city=${encodeURIComponent(city)}`);
+        const data = await response.json();
+        
+        console.log("API Response:", data);
+        
+        if (response.ok) {
+            displayWeatherData(data);
+        } else {
+            showError(data.error || "Failed to get weather data");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        showError("Network error: " + error.message);
+    }
+}
+
+// Function to display weather data
+function displayWeatherData(weather) {
+    console.log("Displaying weather:", weather);
+    
+    const html = `
+        <div class="card shadow mt-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="card-title">${weather.city}, ${weather.country}</h3>
+                        <div class="temperature" style="font-size: 2.5rem; font-weight: bold; color: #0d6efd;">
+                            ${Math.round(weather.temperature)}°C
+                        </div>
+                        <div class="badge bg-primary mt-2">${weather.description}</div>
+                        <p class="text-muted mt-2">Feels like ${Math.round(weather.feels_like)}°C</p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div style="font-size: 3rem; color: #ffa726;">
+                            ${getWeatherIcon(weather.description)}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4 text-center">
+                    <div class="col-3">
+                        <strong>${weather.humidity}%</strong>
+                        <div class="small text-muted">Humidity</div>
+                    </div>
+                    <div class="col-3">
+                        <strong>${weather.wind_speed} m/s</strong>
+                        <div class="small text-muted">Wind Speed</div>
+                    </div>
+                    <div class="col-3">
+                        <strong>${weather.pressure} hPa</strong>
+                        <div class="small text-muted">Pressure</div>
+                    </div>
+                    <div class="col-3">
+                        <strong>${Math.round(weather.feels_like)}°C</strong>
+                        <div class="small text-muted">Feels Like</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('weatherResults').innerHTML = html;
+}
+
+// Function to get weather icon
+function getWeatherIcon(description) {
+    const desc = description.toLowerCase();
+    if (desc.includes('clear')) return '☀️';
+    if (desc.includes('cloud')) return '☁️';
+    if (desc.includes('rain')) return '🌧️';
+    if (desc.includes('snow')) return '❄️';
+    if (desc.includes('thunder')) return '⛈️';
+    if (desc.includes('drizzle')) return '🌦️';
+    return '🌤️';
+}
+
+// Function to show errors
+function showError(message) {
+    document.getElementById('weatherResults').innerHTML = `
+        <div class="alert alert-danger mt-4">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${message}
+        </div>
+    `;
+}
+
+// Global function for summary button
+window.getWeatherSummary = function() {
+    const cities = document.getElementById('citiesInput').value.trim();
+    if (cities) {
+        alert("Weather summary would search for: " + cities);
+    } else {
+        alert("Please enter city names separated by commas");
+    }
+}
+</script>
+{% endblock %}
