@@ -16,8 +16,6 @@ A clean and responsive weather dashboard that displays real-time weather informa
 - JavaScript (ES6+)
 - Git & GitHub
 
-## Live Demo
-[View Live Demo](https://your-username.github.io/your-repo-name)
 
 ## Installation
 1. Clone the repository:
